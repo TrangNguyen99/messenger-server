@@ -1,0 +1,91 @@
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "user3",
+  "email": "user3@gmail.com",
+  "password": "123456"
+}
+
+###
+
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user2@gmail.com",
+  "password": "123456",
+  "deviceId": "2",
+  "platform": "android"
+}
+
+###
+
+POST http://localhost:5000/api/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc2MjM5MjQsImV4cCI6MTY3OTE4MTUyNH0.z0fzgV6CsRkyPFh8b57dWBdU79BUGIVn07Zu4QyXbuM"
+}
+
+###
+
+DELETE http://localhost:5000/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc2MjM5NzEsImV4cCI6MTY0NzYyNDI3MX0.XLxgXvH3toyR17BvP3X5FRjfsW7yht5Z4K83o9KwlcQ
+
+###
+
+GET http://localhost:5000/api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc4MzY3ODksImV4cCI6MTY0NzgzODU4OX0.dP2Fc3iKg_yK86L7GxISnD0KlT9KnFL-iDN9_mGJBx4
+
+###
+
+GET http://localhost:5000/api/users/get-all-other-users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc4MzY3ODksImV4cCI6MTY0NzgzODU4OX0.dP2Fc3iKg_yK86L7GxISnD0KlT9KnFL-iDN9_mGJBx4
+
+###
+
+POST http://localhost:5000/api/conversations/private
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc4MzY3ODksImV4cCI6MTY0NzgzODU4OX0.dP2Fc3iKg_yK86L7GxISnD0KlT9KnFL-iDN9_mGJBx4
+Content-Type: application/json
+
+{
+  "partnerId": "6234be6b6f4c2383963586e8"
+}
+
+###
+
+GET http://localhost:5000/api/conversations
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc4MzY3ODksImV4cCI6MTY0NzgzODU4OX0.dP2Fc3iKg_yK86L7GxISnD0KlT9KnFL-iDN9_mGJBx4
+
+###
+
+GET http://localhost:5000/api/messages/conversation/6234c8e9f715536343316782
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTRkNmY0YzIzODM5NjM1ODZlNSIsImRldmljZUlkIjoiMSJ9LCJpYXQiOjE2NDc4Mzg5MjQsImV4cCI6MTY0Nzg0MDcyNH0.8n80iOv1uZhdP3GYwh2NMSteZ44Mixd8TuTbLmtT6lo
+
+###
+
+POST http://localhost:5000/api/messages
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTZiNmY0YzIzODM5NjM1ODZlOCIsImRldmljZUlkIjoiMiJ9LCJpYXQiOjE2NDc4NDIxNTgsImV4cCI6MTY0Nzg0Mzk1OH0.2SD1n-48pHvWEXTl_isi5igrCim3ygBA_o6N35i-So0
+Content-Type: application/json
+
+{
+  "conversationId": "6234c8e9f715536343316782",
+  "text": "2 to 1 index 8"
+}
+
+###
+
+POST http://localhost:5000/api/users/fcm
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTZiNmY0YzIzODM5NjM1ODZlOCIsImRldmljZUlkIjoiMiJ9LCJpYXQiOjE2NDc4NDIxNTgsImV4cCI6MTY0Nzg0Mzk1OH0.2SD1n-48pHvWEXTl_isi5igrCim3ygBA_o6N35i-So0
+Content-Type: application/json
+
+{
+  "fcmToken": "6234c8e9f715536343316782",
+}
+
+### 
+
+DELETE http://localhost:5000/api/users/fcm
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InVzZXJJZCI6IjYyMzRiZTZiNmY0YzIzODM5NjM1ODZlOCIsImRldmljZUlkIjoiMiJ9LCJpYXQiOjE2NDc4NDIxNTgsImV4cCI6MTY0Nzg0Mzk1OH0.2SD1n-48pHvWEXTl_isi5igrCim3ygBA_o6N35i-So0
+Content-Type: application/json
