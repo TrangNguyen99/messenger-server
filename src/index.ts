@@ -7,11 +7,13 @@ import http from 'http'
 import mongoose from 'mongoose'
 import morgan from 'morgan'
 import {Server} from 'socket.io'
+import swaggerUi from 'swagger-ui-express'
 import {env} from './constant/env'
 import {ERROR_MESSAGE} from './constant/error'
 import {HTTP_STATUS_CODE} from './constant/httpStatusCode'
 import {api} from './route'
 import serviceAccount from './service-account.json'
+import swaggerDocument from './swagger.json'
 
 const main = async () => {
   try {
@@ -46,13 +48,15 @@ const main = async () => {
       next()
     })
 
-    app.get('/', (req, res) => {
-      res.json({
-        type: 'success',
-        message: 'Server is running',
-        data: null,
-      })
-    })
+    // app.get('/', (req, res) => {
+    //   res.json({
+    //     type: 'success',
+    //     message: 'Server is running',
+    //     data: null,
+    //   })
+    // })
+
+    app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
     app.use('/api', api)
 

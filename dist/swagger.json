@@ -1,0 +1,296 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Messenger API"
+    },
+    "host": "clone-messengerr.herokuapp.com",
+    "basePath": "/api",
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "tags": [
+        {
+            "name": "auth"
+        },
+        {
+            "name": "user"
+        },
+        {
+            "name": "conversation"
+        },
+        {
+            "name": "message"
+        }
+    ],
+    "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": ["auth"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": ["auth"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "email": {
+                                    "type": "string"
+                                },
+                                "password": {
+                                    "type": "string"
+                                },
+                                "deviceId": {
+                                    "type": "string"
+                                },
+                                "platform": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/auth/refresh-token": {
+            "post": {
+                "tags": ["auth"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "refreshToken": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/auth/logout": {
+            "delete": {
+                "tags": ["auth"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/me": {
+            "get": {
+                "tags": ["user"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/others": {
+            "get": {
+                "tags": ["user"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/public/{userId}": {
+            "get": {
+                "tags": ["user"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/fcm": {
+            "patch": {
+                "tags": ["user"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "fcmToken": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/conversations": {
+            "get": {
+                "tags": ["conversation"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/conversations/private": {
+            "post": {
+                "tags": ["conversation"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "partnerId": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/messages/conversation/{conversationId}": {
+            "get": {
+                "tags": ["message"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "conversationId",
+                        "in": "path",
+                        "type": "string",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "tags": ["message"],
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "conversationId",
+                        "in": "path",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "receiverId": {
+                                    "type": "string"
+                                },
+                                "text": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    }
+}

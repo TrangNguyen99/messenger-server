@@ -21,11 +21,13 @@ const http_1 = __importDefault(require("http"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const morgan_1 = __importDefault(require("morgan"));
 const socket_io_1 = require("socket.io");
+const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const env_1 = require("./constant/env");
 const error_1 = require("./constant/error");
 const httpStatusCode_1 = require("./constant/httpStatusCode");
 const route_1 = require("./route");
 const service_account_json_1 = __importDefault(require("./service-account.json"));
+const swagger_json_1 = __importDefault(require("./swagger.json"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield mongoose_1.default.connect(`${env_1.env.MONGODB_URI}`);
@@ -52,13 +54,14 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             res.locals.io = io;
             next();
         });
-        app.get('/', (req, res) => {
-            res.json({
-                type: 'success',
-                message: 'Server is running',
-                data: null,
-            });
-        });
+        // app.get('/', (req, res) => {
+        //   res.json({
+        //     type: 'success',
+        //     message: 'Server is running',
+        //     data: null,
+        //   })
+        // })
+        app.use('/', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
         app.use('/api', route_1.api);
         app.use('*', (req, res, next) => {
             const error = {
