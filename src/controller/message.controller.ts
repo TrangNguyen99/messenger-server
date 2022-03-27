@@ -14,28 +14,20 @@ const getMessages = async (req: Request, res: Response, next: NextFunction) => {
   } = res.locals
 
   try {
-    const conversation = await ConversationModel.findById(conversationId)
+    const conversation = await ConversationModel.findOne({
+      _id: conversationId,
+      participants: userId,
+    })
     if (!conversation) {
       next({
         status: HTTP_STATUS_CODE.BAD_REQUEST,
-        message: ERROR_MESSAGE.BAD_REQUEST,
-      })
-      return
-    }
-
-    const userIndex = conversation.participants.findIndex(
-      participant => participant.toString() === userId,
-    )
-    if (userIndex === -1) {
-      next({
-        status: HTTP_STATUS_CODE.UNAUTHORIZED,
-        message: ERROR_MESSAGE.INCORRECT_ACCESS_TOKEN,
+        message: ERROR_MESSAGE.INCORRECT_CONVERSATION_ID,
       })
       return
     }
 
     const messages = await MessageModel.find({conversationId})
-      .select('senderId text createdAt updatedAt')
+      .select('senderId receiverId type text image createdAt updatedAt')
       .sort({createdAt: -1})
     res.json({
       type: 'success',
@@ -54,89 +46,98 @@ const createMessage = async (
 ) => {
   const {
     userId,
-    data: {conversationId, text},
+    name,
+    avatar,
+    data: {conversationId, receiverId, text},
   } = res.locals
 
   try {
-    const conversation = await ConversationModel.findById(conversationId)
+    const participants =
+      userId.localeCompare(receiverId) === -1
+        ? [userId, receiverId]
+        : [receiverId, userId]
+    const conversation = await ConversationModel.findOne({
+      _id: conversationId,
+      participants,
+    })
     if (!conversation) {
       next({
         status: HTTP_STATUS_CODE.BAD_REQUEST,
-        message: ERROR_MESSAGE.BAD_REQUEST,
+        message: ERROR_MESSAGE.INCORRECT_CONVERSATION_ID_RECEIVER_ID,
       })
       return
     }
 
-    const userIndex = conversation.participants.findIndex(
-      participant => participant.toString() === userId,
-    )
-    if (userIndex === -1) {
-      next({
-        status: HTTP_STATUS_CODE.UNAUTHORIZED,
-        message: ERROR_MESSAGE.INCORRECT_ACCESS_TOKEN,
-      })
-      return
-    }
-
-    const message = new MessageModel({conversationId, senderId: userId, text})
+    const message = new MessageModel({
+      conversationId,
+      senderId: userId,
+      receiverId,
+      text,
+    })
     await message.save()
+
+    res.status(HTTP_STATUS_CODE.CREATED).json({
+      type: 'success',
+      message: SUCCESS_MESSAGE.SUCCESS,
+      data: {
+        _id: message._id,
+        senderId: userId,
+        receiverId,
+        type: 'text',
+        text,
+        image: null,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+      },
+    })
+
     await ConversationModel.findByIdAndUpdate(conversationId, {
       finalMessage: message._id,
     })
 
     const io = res.locals.io
-    const user = await UserModel.findById(userId)
-    const partnerIndex = 1 - userIndex
-    const partnerId = conversation.participants[partnerIndex].toString()
-
-    io.to(partnerId).emit('private message', {
+    io.to(receiverId).emit('private message', {
       from: {
-        userId,
-        name: user?.name,
+        _id: userId,
+        name,
+        avatar,
       },
-      to: {
-        conversationId,
-      },
+      to: {partner: {_id: receiverId}, conversationId},
       message: {
         _id: message._id,
+        senderId: userId,
+        receiverId,
+        type: 'text',
         text,
+        image: null,
+        createdAt: message.createdAt,
         updatedAt: message.updatedAt,
       },
     })
 
-    const partner = await UserModel.findById(partnerId)
+    const receiver = await UserModel.findById(receiverId)
     const fcmTokens: string[] = []
-    partner?.devices.forEach(d => {
-      if (d.fcmToken) {
-        fcmTokens.push(d.fcmToken)
+    receiver?.devices.forEach(device => {
+      if (device.fcmToken) {
+        fcmTokens.push(device.fcmToken)
       }
     })
     if (fcmTokens.length) {
       admin.messaging().sendMulticast({
         tokens: fcmTokens,
         notification: {
-          title: user?.name,
+          title: name,
           body: text,
         },
         android: {
           notification: {
             channelId: 'default',
+            icon: 'ic_notifee_small_icon',
+            sound: 'sound',
           },
         },
       })
     }
-
-    res.json({
-      type: 'success',
-      message: SUCCESS_MESSAGE.SUCCESS,
-      data: {
-        _id: message._id,
-        senderId: userId,
-        text: message.text,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-      },
-    })
   } catch (error) {
     next(error)
   }

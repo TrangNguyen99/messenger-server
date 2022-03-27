@@ -5,17 +5,17 @@ import {conversationValidation} from '../validation/conversation.route'
 
 const router = express.Router()
 
-router.post(
-  '/private',
-  conversationValidation.createPrivateConversation,
-  verifyAccessToken,
-  conversationController.createPrivateConversation,
-)
 router.get(
   '/',
   conversationValidation.getConversations,
   verifyAccessToken,
   conversationController.getConversations,
+)
+router.post(
+  '/private',
+  conversationValidation.createPrivateConversation,
+  verifyAccessToken,
+  conversationController.createPrivateConversation,
 )
 
 export const conversationRoute = router

@@ -12,7 +12,7 @@ router.get(
   messageController.getMessages,
 )
 router.post(
-  '/',
+  '/conversation/:conversationId',
   messageValidation.createMessage,
   verifyAccessToken,
   messageController.createMessage,

@@ -10,4 +10,10 @@ export const ERROR_MESSAGE = {
   MISSING_AUTH_HEADER: 'Auth header is missing',
   MISSING_ACCESS_TOKEN: 'Access token is missing',
   INCORRECT_ACCESS_TOKEN: 'Access token is incorrect',
+
+  INCORRECT_USER_ID: 'User id is incorrect',
+  INCORRECT_CONVERSATION_ID: 'Conversation id is incorrect',
+  INCORRECT_CONVERSATION_ID_RECEIVER_ID:
+    'Conversation id and/or receiver id are incorrect',
+  MISSING_AVATAR: 'Avatar is missing',
 }

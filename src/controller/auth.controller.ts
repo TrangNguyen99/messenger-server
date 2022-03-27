@@ -11,8 +11,8 @@ import {generateJwt, verifyJwt} from '../util/jwt'
 const register = async (req: Request, res: Response, next: NextFunction) => {
   const {name, email, password} = res.locals.data
   try {
-    const countUser = await UserModel.count({email})
-    if (countUser) {
+    const user = await UserModel.findOne({email})
+    if (user) {
       next({
         status: HTTP_STATUS_CODE.BAD_REQUEST,
         message: ERROR_MESSAGE.EMAIL_ALREADY_EXISTS,
@@ -21,8 +21,8 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const hashPassword = bcrypt.hashSync(password)
-    const user = new UserModel({name, email, password: hashPassword})
-    await user.save()
+    const newUser = new UserModel({name, email, password: hashPassword})
+    await newUser.save()
 
     res.status(HTTP_STATUS_CODE.CREATED).json({
       type: 'success',
@@ -57,7 +57,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const accessToken = generateJwt(
-      {userId: user._id, deviceId},
+      {userId: user._id, deviceId, name: user.name, avatar: user.avatar},
       `${env.JWT_ACCESS_TOKEN_KEY}`,
       JWT_EXPIRE_TIME.ACCESS_TOKEN,
     )
@@ -101,28 +101,22 @@ const refreshToken = async (
     }
 
     const {userId, deviceId} = data.data
-    const user = await UserModel.findById(userId)
+    const user = await UserModel.findOne({
+      _id: userId,
+      devices: {
+        $elemMatch: {deviceId, refreshToken},
+      },
+    })
     if (!user) {
       next({
-        status: HTTP_STATUS_CODE.BAD_REQUEST,
-        message: ERROR_MESSAGE.INCORRECT_REFRESH_TOKEN,
-      })
-      return
-    }
-
-    const deviceIndex = user.devices.findIndex(
-      device => device.deviceId === deviceId && device.refreshToken,
-    )
-    if (deviceIndex === -1) {
-      next({
-        status: HTTP_STATUS_CODE.BAD_REQUEST,
+        status: HTTP_STATUS_CODE.UNAUTHORIZED,
         message: ERROR_MESSAGE.INCORRECT_REFRESH_TOKEN,
       })
       return
     }
 
     const accessToken = generateJwt(
-      {userId: user._id, deviceId},
+      {userId, deviceId, name: user.name, avatar: user.avatar},
       `${env.JWT_ACCESS_TOKEN_KEY}`,
       JWT_EXPIRE_TIME.ACCESS_TOKEN,
     )
@@ -143,10 +137,11 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     const user = await UserModel.findById(userId)
     if (user) {
       const deviceIndex = user.devices.findIndex(
-        device => device.deviceId === deviceId && device.refreshToken,
+        device => device.deviceId === deviceId,
       )
       if (deviceIndex !== -1) {
         user.devices[deviceIndex].refreshToken = null
+        user.devices[deviceIndex].fcmToken = null
         await user.save()
       }
     }

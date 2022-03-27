@@ -16,7 +16,7 @@ export const verifyJwt = (
     return res
   } catch (error: any) {
     next({
-      status: HTTP_STATUS_CODE.BAD_REQUEST,
+      status: HTTP_STATUS_CODE.UNAUTHORIZED,
       message: error.message,
     })
   }

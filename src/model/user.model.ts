@@ -30,6 +30,7 @@ const deviceSchema = new Schema<Device>({
 interface User {
   name: string
   email: string
+  avatar: string | null
   password: string
   devices: Types.DocumentArray<Device>
 }
@@ -48,6 +49,10 @@ const userSchema = new Schema<User>(
       required: true,
       unique: true,
       trim: true,
+    },
+    avatar: {
+      type: String,
+      default: null,
     },
     password: {
       type: String,

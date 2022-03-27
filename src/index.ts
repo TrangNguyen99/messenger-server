@@ -11,9 +11,7 @@ import {env} from './constant/env'
 import {ERROR_MESSAGE} from './constant/error'
 import {HTTP_STATUS_CODE} from './constant/httpStatusCode'
 import {api} from './route'
-import serviceAccount from './serviceaccount.json'
-
-const x: any = serviceAccount
+import serviceAccount from './service-account.json'
 
 const main = async () => {
   try {
@@ -31,11 +29,16 @@ const main = async () => {
     })
 
     admin.initializeApp({
-      credential: admin.credential.cert(x),
+      credential: admin.credential.cert({
+        privateKey: serviceAccount.private_key,
+        clientEmail: serviceAccount.client_email,
+        projectId: serviceAccount.project_id,
+      }),
     })
 
     app.use(cors())
     app.use(express.json())
+    app.use(express.static('public'))
     app.use(morgan('dev'))
 
     app.use((req, res, next) => {

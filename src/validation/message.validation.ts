@@ -4,7 +4,9 @@ import {HTTP_STATUS_CODE} from '../constant/httpStatusCode'
 
 const getMessages = async (req: Request, res: Response, next: NextFunction) => {
   const condition = Joi.object({
-    conversationId: Joi.string().required(),
+    conversationId: Joi.string()
+      .required()
+      .regex(/^[0-9a-fA-F]{24}$/),
   })
 
   try {
@@ -24,14 +26,26 @@ const createMessage = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const condition = Joi.object({
-    conversationId: Joi.string().required(),
-    text: Joi.string().required().trim(),
+  const condition1 = Joi.object({
+    conversationId: Joi.string()
+      .required()
+      .regex(/^[0-9a-fA-F]{24}$/),
+  })
+  const condition2 = Joi.object({
+    receiverId: Joi.string()
+      .required()
+      .regex(/^[0-9a-fA-F]{24}$/),
+    text: Joi.string().trim(),
   })
 
   try {
-    const data = await condition.validateAsync(req.body, {abortEarly: false})
-    res.locals.data = data
+    const data1 = await condition1.validateAsync(req.params, {
+      abortEarly: false,
+    })
+    const data2 = await condition2.validateAsync(req.body, {
+      abortEarly: false,
+    })
+    res.locals.data = {...data1, ...data2}
     next()
   } catch (error: any) {
     next({
